@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - My Blog</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">Linus Horn's Blog</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/blogs">Blogs</a>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container">
+        <div class="page-header">
+            <h1>{{header}}</h1>
+            <p class="tag-description">{{description}}</p>
+        </div>
+        <div class="blog-list">
+            {{blog_cards}}
+        </div>
+        <div class="section-footer">
+            {{section_footer}}
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2025 Linus Horn.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
