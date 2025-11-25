@@ -51,16 +51,16 @@ def process_markdown_file(file_path: str) -> Dict[str, Any]:
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File {file_path} not found")
     print(f"[DEBUG]: Processing markdown file {file_path}")
-    #with open(file_path, 'r', encoding='utf-8') as f:
-    post = frontmatter.parse(file_path)
-    print("[DEBUG]: frontmatter parsed:", post)
+    with open(file_path, 'r', encoding='utf-8') as f:
+        post = frontmatter.loads(f.read())
+    print("[DEBUG]: frontmatter parsed")
     
     md = get_markdown_processor()
-    html_content = md.convert(post["content"])
+    html_content = md.convert(post.content)
     print("[DEBUG]: markdown converted to HTML")
     
     # Extract metadata
-    metadata = post["metadata"]
+    metadata = post.metadata
     print(f"[DEBUG]: metadata extracted: {metadata}")
     
     # Get file stats for date if not in frontmatter
