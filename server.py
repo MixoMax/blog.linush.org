@@ -53,7 +53,7 @@ def process_markdown_file(file_path: str) -> Dict[str, Any]:
     print(f"[DEBUG]: Processing markdown file {file_path}")
     #with open(file_path, 'r', encoding='utf-8') as f:
     post = frontmatter.parse(file_path)
-    print("[DEBUG]: frontmatter parsed")
+    print("[DEBUG]: frontmatter parsed:", post)
     
     md = get_markdown_processor()
     html_content = md.convert(post["content"])
