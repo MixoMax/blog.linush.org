@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}} - My Blog</title>
+    <title>{{title}} - Linus Horn's Blog</title>
     <meta name="description" content="{{description}}">
     <meta name="author" content="{{author}}">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css">
@@ -13,46 +14,77 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/contrib/auto-render.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="nav-brand">Linus Horn's Blog</a>
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/blogs">Blogs</a>
+<body class="text-gray-300 antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 left-0 border-b border-white/5 bg-black/50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold tracking-tighter uppercase hover-trigger">LinusH.ORG</a>
+            <div class="flex gap-8">
+                <a href="/" class="nav-link text-sm hover-trigger">/HOME</a>
+                <a href="/blogs" class="nav-link text-sm hover-trigger">/BLOGS</a>
             </div>
+            <a href="#" class="btn-secondary text-xs hover-trigger">CONTACT_ME</a>
         </div>
     </nav>
     
-    <main class="container">
-        <article class="blog-post">
-            <header class="post-header">
-                <h1 class="post-title">{{title}}</h1>
-                <div class="post-meta">
-                    <span class="post-author">By {{author}}</span>
-                    <span class="post-date">{{created_date}}</span>
+    <main class="min-h-screen pt-32 pb-24 relative">
+        <article class="max-w-4xl mx-auto px-6">
+            <header class="mb-16 fade-up text-center">
+                <div class="flex justify-center gap-4 mb-6 text-sm font-mono text-accent">
+                    <span>{{created_date}}</span>
+                    <span>//</span>
+                    <span>{{author}}</span>
                 </div>
-                {{tags}}
+                <h1 class="text-4xl md:text-6xl font-bold mb-8 leading-tight">{{title}}</h1>
+                <div class="flex justify-center gap-2">
+                    {{tags}}
+                </div>
             </header>
             
-            {{toc}}
+            <div class="glass-panel p-8 rounded-lg mb-12 fade-up">
+                {{toc}}
+            </div>
             
-            <div class="post-content">
+            <div class="post-content fade-up text-lg leading-relaxed">
                 {{content}}
             </div>
         </article>
     </main>
     
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                <p>© 2025 Linus Horn.</p>
+    <!-- Footer -->
+    <footer class="border-t border-white/5 bg-black py-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h4 class="text-xl font-bold mb-2">blog.linush.org</h4>
+                <p class="text-gray-500 text-sm">High-Performance Markdown CMS</p>
             </div>
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-500 hover:text-accent transition-colors hover-trigger">GITHUB</a>
+                <a href="#" class="text-gray-500 hover:text-accent transition-colors hover-trigger">TWITTER</a>
+                <a href="#" class="text-gray-500 hover:text-accent transition-colors hover-trigger">LINKEDIN</a>
+            </div>
+            <p class="text-gray-600 text-sm">© 2025 Linus Horn.</p>
         </div>
     </footer>
-    
+
+    <script src="/static/script.js"></script>
     <script>
+        // Initialize Lenis for smooth scrolling
+        const lenis = new Lenis();
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+
         // Render LaTeX
         document.addEventListener("DOMContentLoaded", function() {
             renderMathInElement(document.body, {
