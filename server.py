@@ -50,7 +50,7 @@ def process_markdown_file(file_path: str) -> Dict[str, Any]:
     """Process a markdown file and return metadata and HTML content."""
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File {file_path} not found")
-    
+    print(f"[DEBUG]: Processing markdown file {file_path}")
     #with open(file_path, 'r', encoding='utf-8') as f:
     post = frontmatter.parse(file_path)
     print("[DEBUG]: frontmatter parsed")
