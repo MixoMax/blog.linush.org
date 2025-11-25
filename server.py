@@ -53,17 +53,21 @@ def process_markdown_file(file_path: str) -> Dict[str, Any]:
     
     #with open(file_path, 'r', encoding='utf-8') as f:
     post = frontmatter.parse(file_path)
+    print("[DEBUG]: frontmatter parsed")
     
     md = get_markdown_processor()
     html_content = md.convert(post["content"])
+    print("[DEBUG]: markdown converted to HTML")
     
     # Extract metadata
     metadata = post["metadata"]
+    print(f"[DEBUG]: metadata extracted: {metadata}")
     
     # Get file stats for date if not in frontmatter
     file_stat = os.stat(file_path)
     created_date = datetime.fromtimestamp(file_stat.st_ctime)
     modified_date = datetime.fromtimestamp(file_stat.st_mtime)
+    print(f"[DEBUG]: file stats - created: {created_date}, modified: {modified_date}")
     
     return {
         'title': metadata.get('title', os.path.basename(file_path).replace('.md', '').replace('_', ' ').title()),
