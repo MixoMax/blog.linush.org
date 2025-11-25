@@ -84,21 +84,26 @@ def process_markdown_file(file_path: str) -> Dict[str, Any]:
 
 def get_all_blog_posts() -> List[Dict[str, Any]]:
     """Get all blog posts from the blog_src directory."""
+    print("[DEBUG]: Getting all blog posts")
     blog_posts = []
     blog_src_dir = Path('blog_src')
     
     if not blog_src_dir.exists():
+        print("[DEBUG]: blog_src directory does not exist")
         return []
     
     for md_file in blog_src_dir.glob('*.md'):
         try:
+            print(f"[DEBUG]: Processing file {md_file}")
             post_data = process_markdown_file(str(md_file))
+            print(f"[DEBUG]: Processed post data: {post_data['title']}")
             blog_posts.append(post_data)
         except Exception as e:
             print(f"Error processing {md_file}: {e}")
     
     # Sort by creation date (newest first)
     blog_posts.sort(key=lambda x: x['created_date'], reverse=True)
+    print(f"[DEBUG]: Total blog posts found: {len(blog_posts)}")
     return blog_posts
 
 def create_blog_html(post_data: Dict[str, Any]) -> str:
