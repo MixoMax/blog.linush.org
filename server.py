@@ -136,6 +136,51 @@ def create_blog_html(post_data: Dict[str, Any]) -> str:
 
     return template
 
+def generate_blog_card_html(post: Dict[str, Any]) -> str:
+    """Helper function to generate consistent HTML for blog cards."""
+    
+    # Card container with border, dark background, and hover effects
+    card = f'''
+    <article class="flex flex-col h-full p-6 border border-white/10 rounded-2xl bg-white/[0.02] hover:bg-white/[0.05] hover:border-cyan-500/30 transition-all duration-300 group relative overflow-hidden">
+        
+        <!-- Date and Author Meta -->
+        <div class="flex items-center gap-3 text-xs font-mono text-gray-500 mb-4">
+            <span>{post["created_date"].strftime("%Y-%m-%d")}</span>
+            <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
+            <span>{post["author"]}</span>
+        </div>
+
+        <!-- Title -->
+        <h2 class="text-2xl font-bold mb-3 leading-tight">
+            <a href="/blog/{post["filename"]}" class="block group-hover:text-cyan-400 transition-colors">
+                {post["title"]}
+            </a>
+        </h2>
+
+        <!-- Description -->
+        <p class="text-gray-400 text-sm leading-relaxed mb-6 flex-grow">
+            {post["description"] if post["description"] else "No description available."}
+        </p>
+
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5">
+    '''
+    
+    if post["tags"]:
+        for tag in post["tags"]:
+            card += f'''
+            <a href="/tag/{tag}" 
+               class="px-2 py-1 text-[10px] uppercase tracking-wider border border-white/10 rounded bg-black/20 text-gray-400 hover:text-cyan-400 hover:border-cyan-500/50 transition-colors">
+               {tag}
+            </a>
+            '''
+    
+    card += '''
+        </div>
+    </article>
+    '''
+    return card
+
 @app.get("/", response_class=HTMLResponse)
 async def home():
     """Serve the homepage."""
@@ -161,20 +206,7 @@ async def get_all_blogs_page():
 
     blog_cards = ""
     for post in posts:
-        card = '<div class="blog-card">'
-        card += f'<h2><a href="/blog/{post["filename"]}">{post["title"]}</a></h2>'
-        card += '<div class="post-meta">'
-        card += f'<span>By {post["author"]}</span>'
-        card += f'<span>{post["created_date"].strftime("%B %d, %Y")}</span>'
-        card += '</div>'
-        if post["description"]:
-            card += f'<p class="post-description">{post["description"]}</p>'
-        if post["tags"]:
-            card += '<div class="post-tags">'
-            card += "".join([f'<a href="/tag/{tag}" class="tag">{tag}</a>' for tag in post["tags"]])
-            card += '</div>'
-        card += '</div>'
-        blog_cards += card
+        blog_cards += generate_blog_card_html(post)
 
     with open("templates/blog_list_template.html", "r", encoding="utf-8") as f:
         template = f.read()
@@ -194,44 +226,33 @@ async def get_all_blogs_page():
 async def get_posts_by_tag(tag_name: str):
     """Get all blog posts that have the specified tag using a template."""
     all_posts = get_all_blog_posts()
+    # Case insensitive matching
     tagged_posts = [post for post in all_posts if tag_name.lower() in [tag.lower() for tag in post['tags']]]
 
     blog_cards = ""
     if not tagged_posts:
+        # Styled empty state
         blog_cards = (
-            f'<div class="no-posts">'
-            f'<h2>No posts found with tag "{tag_name}"</h2>'
-            f'<p><a href="/blogs">View all posts</a> or <a href="/">return to homepage</a></p>'
+            f'<div class="col-span-full py-12 text-center border border-dashed border-white/10 rounded-2xl">'
+            f'<h2 class="text-xl text-gray-400 mb-4">No posts found with tag <span class="text-cyan-400">"{tag_name}"</span></h2>'
+            f'<a href="/blogs" class="text-sm text-white hover:text-cyan-400 underline underline-offset-4">View all posts</a>'
             f'</div>'
         )
-        description = ""
+        description = "System returned 0 results."
     else:
         for post in tagged_posts:
-            card = '<div class="blog-card">'
-            card += f'<h2><a href="/blog/{post["filename"]}">{post["title"]}</a></h2>'
-            card += '<div class="post-meta">'
-            card += f'<span>By {post["author"]}</span>'
-            card += f'<span>{post["created_date"].strftime("%B %d, %Y")}</span>'
-            card += '</div>'
-            if post["description"]:
-                card += f'<p class="post-description">{post["description"]}</p>'
-            if post["tags"]:
-                card += '<div class="post-tags">'
-                card += "".join([f'<a href="/tag/{tag}" class="tag">{tag}</a>' for tag in post["tags"]])
-                card += '</div>'
-            card += '</div>'
-            blog_cards += card
-        description = f'Showing {len(tagged_posts)} post{"s" if len(tagged_posts) != 1 else ""} with this tag'
+            blog_cards += generate_blog_card_html(post)
+        description = f'Displaying {len(tagged_posts)} entry{"s" if len(tagged_posts) != 1 else ""} detected.'
 
     with open("templates/tag_list_template.html", "r", encoding="utf-8") as f:
         template = f.read()
 
     replacements = {
         "{{title}}": f'Posts tagged "{tag_name}"',
-        "{{header}}": f'Posts tagged "{tag_name}"',
+        "{{header}}": f'Tag: {tag_name}',
         "{{description}}": description,
         "{{blog_cards}}": blog_cards,
-        "{{section_footer}}": '<a href="/blogs" class="btn btn-outline">View All Posts</a>',
+        "{{section_footer}}": '<a href="/blogs" class="inline-block px-6 py-2 border border-white/20 hover:border-white rounded-full text-sm transition-all hover:bg-white/5">View All Posts</a>',
     }
 
     for key, value in replacements.items():
